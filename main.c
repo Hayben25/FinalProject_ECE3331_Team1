@@ -3,16 +3,23 @@
 
 int main(int argc, char *argv[]) {
 
+  /* variables for command line arguments */
   bool I = false;
   bool V = false;
   bool O = false;
 
-  char *search[argc - 1];
-  int index = 0;
+  /* array for search terms */
+  char *search_tmp[argc - 1];
+  int search_index = 0;
+  /* array for files */
+  char *files_tmp[argc - 1];
+  int files_index = 0;
 
+  /* command line argument organization loop */
   for (int i = 1; i < argc; i++) {
-    if (argv[i][0] == '-') {
-      for (int j = 0; j < sizeof(argv[i]); j++) {
+    if (argv[i][0] == '-') { /* takes specific arguments (ex. -v, -i, -iv) */
+
+      for (int j = 0; j < strlen(argv[i]); j++) {
         switch (argv[i][j]) {
         case 'i':
           I = true;
@@ -25,16 +32,44 @@ int main(int argc, char *argv[]) {
           break;
         }
       }
-    } else {
-      if (strstr(argv[i], ".txt") == NULL) {
-        search[index] = argv[i];
-        index++;
-        printf("%s is not a text file!\n", search[index - 1]);
+    }
+
+    else { /* file vs search detection */
+      FILE *file;
+      if ((file = fopen(argv[i], "r")) != NULL) {
+      	files_tmp[files_index] = argv[i];
+      	files_index++;
+        fclose(file);
       } else {
-        if (argv[i] - strstr(argv[i], ".txt") + strlen(argv[i]) == 4) {
-          printf("%s is a text file!\n", argv[i]);
-        }
+      	search_tmp[search_index] = argv[i];
+      	search_index++;
       }
     }
+  }
+  int ct = 0;
+  for(int i = 0; i < argc-1; i++) {
+  	if(search_tmp[i] == 0) {
+  		break;
+  	}
+  	ct++;
+  } 
+  printf("searches:");
+  char *search[ct];
+  for(int i = 0; i < ct-1; i++) {
+  	search[i] = search_tmp[i];
+  	printf(" %s", search[i]);
+  } 
+  ct = 0;
+  for(int i = 0; i < argc-1; i++) {
+  	if(files_tmp[i] == 0) {
+  		break;
+  	}
+  	ct++;
+  }
+  printf("\nfiles: ", ct);
+  char *files[ct];
+  for(int i = 0; i < ct; i++) {
+  	files[i] = files_tmp[i];
+  	printf(" %s", files[i]);
   }
 }
