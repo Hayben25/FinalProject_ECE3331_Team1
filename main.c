@@ -7,12 +7,13 @@ int main(int argc, char *argv[]) {
   bool I = false;
   bool V = false;
   bool O = false;
+  bool C = false;
 
   /* array for search terms */
   char *search_tmp[argc - 1];
   int search_index = 0;
   /* array for files */
-  char *files_tmp[argc - 1];
+  char *files[argc - 1];
   int files_index = 0;
 
   /* command line argument organization loop */
@@ -30,6 +31,9 @@ int main(int argc, char *argv[]) {
         case 'o':
           O = true;
           break;
+        case 'c':
+        	C = true;
+        	break;
         }
       }
     }
@@ -37,7 +41,7 @@ int main(int argc, char *argv[]) {
     else { /* file vs search detection */
       FILE *file;
       if ((file = fopen(argv[i], "r")) != NULL) {
-      	files_tmp[files_index] = argv[i];
+      	files[files_index] = argv[i];
       	files_index++;
         fclose(file);
       } else {
@@ -46,30 +50,33 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+  /* puts searches tmp array into a better fitting one */
   int ct = 0;
   for(int i = 0; i < argc-1; i++) {
-  	if(search_tmp[i] == 0) {
+  	if(search_tmp[i] == 0) { /* checks if at end of searches */
   		break;
   	}
   	ct++;
   } 
-  printf("searches:");
+  ct--;
   char *search[ct];
-  for(int i = 0; i < ct-1; i++) {
+  for(int i = 0; i < ct; i++) {
   	search[i] = search_tmp[i];
-  	printf(" %s", search[i]);
   } 
-  ct = 0;
+  
+  /* main file searching, iterates through each file and searches through searches array */
   for(int i = 0; i < argc-1; i++) {
-  	if(files_tmp[i] == 0) {
+  	if(files[i] == 0) { /* checks if at end of files */
   		break;
   	}
-  	ct++;
-  }
-  printf("\nfiles: ", ct);
-  char *files[ct];
-  for(int i = 0; i < ct; i++) {
-  	files[i] = files_tmp[i];
-  	printf(" %s", files[i]);
+  	FILE* file = fopen(files[i], "r")
+  	printf("%s\n\n", files[i]);
+  	for(int j = 0; j < ct; j++) {
+  		printf("%s\n\n\n", search[j]);
+  		if(C) {
+  			
+  		}
+  	}
+  	fclose(file);
   }
 }
