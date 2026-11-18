@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <regex.h>
 
 int main(int argc, char *argv[]) {
 
@@ -52,10 +53,7 @@ int main(int argc, char *argv[]) {
   }
   /* puts searches tmp array into a better fitting one */
   int ct = 0;
-  for(int i = 0; i < argc-1; i++) {
-  	if(search_tmp[i] == 0) { /* checks if at end of searches */
-  		break;
-  	}
+  while(search_tmp[ct] != 0) {
   	ct++;
   } 
   ct--;
@@ -65,17 +63,24 @@ int main(int argc, char *argv[]) {
   } 
   
   /* main file searching, iterates through each file and searches through searches array */
-  for(int i = 0; i < argc-1; i++) {
-  	if(files[i] == 0) { /* checks if at end of files */
-  		break;
-  	}
+  int i = 0;
+  while(files[i] != 0) {
   	FILE* file = fopen(files[i], "r")
   	printf("%s\n\n", files[i]);
   	for(int j = 0; j < ct; j++) {
   		printf("%s\n\n\n", search[j]);
-  		if(C) {
-  			
-  		}
+  		regex_t regex;
+  		regematch_t pmatch[1];
+
+  		if(regcomp(&regex, search[j], REG_NEWLINE))
+  			exit(EXIT_FAILURE);
+
+  		
+  		for (unsigned int i = 0;; i++) {
+    		if (regexec(&regex, file, sizeof(pmatch)/sizeof(pmatch[0]), pmatch, 0))
+      		break;
+
+      	
   	}
   	fclose(file);
   }
