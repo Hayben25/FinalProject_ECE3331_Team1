@@ -1,17 +1,19 @@
-#include <stdio.h>
-#include <string.h>
 #include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char *argv[]) {
 
   /* variables for command line arguments */
   bool I = false;
   bool V = false;
+  bool N = false;
   bool O = false;
   bool C = false;
 
   /* array for search terms */
-  char *search_tmp[argc - 1];
+  char *search[argc - 1];
   int search_index = 0;
   /* array for files */
   char *files[argc - 1];
@@ -33,7 +35,10 @@ int main(int argc, char *argv[]) {
           O = true;
           break;
         case 'c':
-        	C = true;
+          C = true;
+          break;
+        case 'n':
+        	N = true;
         	break;
         }
       }
@@ -42,46 +47,39 @@ int main(int argc, char *argv[]) {
     else { /* file vs search detection */
       FILE *file;
       if ((file = fopen(argv[i], "r")) != NULL) {
-      	files[files_index] = argv[i];
-      	files_index++;
+        files[files_index] = argv[i];
+        files_index++;
         fclose(file);
       } else {
-      	search_tmp[search_index] = argv[i];
-      	search_index++;
+        search[search_index] = argv[i];
+        search_index++;
       }
     }
   }
-  /* puts searches tmp array into a better fitting one */
-  int ct = 0;
-  while(search_tmp[ct] != 0) {
-  	ct++;
-  } 
-  ct--;
-  char *search[ct];
-  for(int i = 0; i < ct; i++) {
-  	search[i] = search_tmp[i];
-  } 
-  
-  /* main file searching, iterates through each file and searches through searches array */
+  /* main file searching, iterates through each file and searches through
+   * searches array */
   int i = 0;
-  while(files[i] != 0) {
-  	FILE* file = fopen(files[i], "r")
-  	printf("%s\n\n", files[i]);
-  	for(int j = 0; j < ct; j++) {
-  		printf("%s\n\n\n", search[j]);
-  		regex_t regex;
-  		regematch_t pmatch[1];
+  while (files[i] != 0) {
+    FILE *file = fopen(files[i], "r");
+    printf("%s\n\n", files[i]);
+    for (int j = 0; j < search_index; j++) {
+      printf("%s\n\n\n", search[j]);
+      regex_t regex;
+      regmatch_t pmatch[1];
 
-  		if(regcomp(&regex, search[j], REG_NEWLINE))
-  			exit(EXIT_FAILURE);
-
-  		
-  		for (unsigned int i = 0;; i++) {
-    		if (regexec(&regex, file, sizeof(pmatch)/sizeof(pmatch[0]), pmatch, 0))
-      		break;
-
-      	
-  	}
-  	fclose(file);
+      if (regcomp(&regex, search[j], REG_NEWLINE)) {
+        exit(EXIT_FAILURE);
+      }
+      char current_line[500];
+      while (fgets(current_line, sizeof(current_line), file) != NULL) {
+        while (true) {
+          if (regexec(&regex, current_line, sizeof(pmatch) / sizeof(pmatch[0]),
+                      pmatch, 0)) {
+            break;
+          }
+        }
+      }
+    }
+    fclose(file);
   }
 }
