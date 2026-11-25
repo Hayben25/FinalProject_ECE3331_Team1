@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <regex.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -60,30 +61,45 @@ int main(int argc, char *argv[]) {
   }
   /* main file searching, iterates through each file and searches through
    * searches array */
-  for(int i = 0; i < files_index; i++){
-  FILE *file = fopen(files[i], "r");
-  printf("File: %s\n", files[i]);
-  for (int j = 0; j < search_index; j++) {
-    printf("Search term: %s\n", search[j]);
-    regex_t regex;
-
-    if (regcomp(&regex, search[j], REG_EXTENDED | REG_NOSUB)) {
-      exit(EXIT_FAILURE);
-    }
-    char current_line[500];
-    while (fgets(current_line, sizeof(current_line), file) != NULL) {
-      int reti = regexec(&regex, current_line, 0, NULL, 0);
-      if (!reti) {
-        printf("%s", current_line);
-      } else if (reti == REG_NOMATCH) {
-      } else {
-        regerror(reti, &regex, current_line, sizeof(current_line));
-        fprintf(stderr, "Regex match failed: %s\n", current_line);
-        exit(1);
+  for (int i = 0; i < files_index; i++) {
+    FILE *file = fopen(files[i], "r");
+    printf("File: %s\n", files[i]);
+    for (int j = 0; j < search_index; j++) {
+      for (int k = 0; I && k < strlen(search[j]); k++) {
+        search[j][k] = tolower(search[j][k]);
       }
+
+      printf("Search term: %s\n", search[j]);
+      regex_t regex;
+
+      if (regcomp(&regex, search[j], REG_EXTENDED | REG_NOSUB)) {
+        exit(EXIT_FAILURE);
+      }
+      char current_line[500];
+      while (fgets(current_line, sizeof(current_line), file) != NULL) {
+      		char tmp_line[strlen(current_line)];
+      	if (I) {
+        for (int k = 0; k < strlen(current_line); k++) {
+          tmp_line[k] = tolower(current_line[k]);
+        }
+        }
+        int reti;
+        if(I) {
+        	reti = regexec(&regex, tmp_line, 0, NULL, 0);
+        } else {
+        reti = regexec(&regex, current_line, 0, NULL, 0);
+        }
+        if (!reti) {
+          printf("%s", current_line);
+        } else if (reti == REG_NOMATCH) {
+        } else {
+          regerror(reti, &regex, current_line, sizeof(current_line));
+          fprintf(stderr, "Regex match failed: %s\n", current_line);
+          exit(1);
+        }
+      }
+      regfree(&regex);
     }
-    regfree(&regex);
-  }
-  fclose(file);
+    fclose(file);
   }
 }
