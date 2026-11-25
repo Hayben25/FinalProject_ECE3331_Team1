@@ -11,7 +11,7 @@
 #define ANSI_COLOR_GREEN "\x1b[32m"
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_BLUE "\x1b[34m"
 
 int main(int argc, char *argv[]) {
 
@@ -131,21 +131,21 @@ int main(int argc, char *argv[]) {
               s += pmatch[0].rm_eo;
             }
           } else {
-          	if (V) {
-          		bool copy = false;
-          		for(int k = 0; k < v; k++) {
-          			if(strcmp(v_list[k], current_line) == 0) {
-          				copy = true;
-          				break;
-          			}
-          		}
-          		if(!copy || v == 0) {
-          			v_list[v] = current_line;
-          			printf("%s", v_list[v]);
-          			v++;
-          		}
+            if (V) {
+              bool copy = false;
+              for (int k = 0; k < v; k++) {
+                if (strcmp(v_list[k], current_line) == 0) {
+                  copy = true;
+                  break;
+                }
+              }
+              if (!copy || v == 0) {
+                v_list[v] = current_line;
+                printf("%s", v_list[v]);
+                v++;
+              }
             } else {
-            printf("%s", current_line);
+              printf("%s", current_line);
             }
           }
         } else if (reti == REG_NOMATCH) { /* if the regex is not found */
@@ -161,7 +161,8 @@ int main(int argc, char *argv[]) {
         } /* if -n is chosen this keeps track of the line number */
       }
       if (C) {
-        printf(ANSI_COLOR_BLUE "%s had %d selected lines\n" ANSI_COLOR_RESET, files[i], count_selected);
+        printf(ANSI_COLOR_BLUE "%s had %d selected lines\n" ANSI_COLOR_RESET,
+               files[i], count_selected);
       }
       regfree(&regex);
       fclose(file);
