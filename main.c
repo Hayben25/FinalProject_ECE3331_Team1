@@ -62,9 +62,9 @@ int main(int argc, char *argv[]) {
   /* main file searching, iterates through each file and searches through
    * searches array */
   for (int i = 0; i < files_index; i++) {
-    FILE *file = fopen(files[i], "r");
     printf("File: %s\n", files[i]);
     for (int j = 0; j < search_index; j++) {
+      FILE *file = fopen(files[i], "r");
       for (int k = 0; I && k < strlen(search[j]); k++) {
         search[j][k] = tolower(search[j][k]);
       }
@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
       }
       char current_line[500];
+      int line_number = 1;
       while (fgets(current_line, sizeof(current_line), file) != NULL) {
         char tmp_line[strlen(current_line)];
         if (I) {
@@ -90,6 +91,9 @@ int main(int argc, char *argv[]) {
           reti = regexec(&regex, current_line, 0, NULL, 0);
         }
         if (!reti) {
+          if (N) {
+            printf("%d: ", line_number);
+          }
           printf("%s", current_line);
         } else if (reti == REG_NOMATCH) {
         } else {
@@ -97,9 +101,10 @@ int main(int argc, char *argv[]) {
           fprintf(stderr, "Regex match failed: %s\n", current_line);
           exit(1);
         }
+        line_number++;
       }
       regfree(&regex);
+      fclose(file);
     }
-    fclose(file);
   }
 }

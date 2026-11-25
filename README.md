@@ -3,7 +3,7 @@
 - [ ] Code for Regex Lite
 	- [ ] command line arguments
 		- [x] i
-		- [ ] n
+		- [x] n
 		- [ ] v
 		- [ ] c
 		- [ ] o
