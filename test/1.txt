@@ -1,0 +1,5 @@
+input
+output
+line 3
+what
+lol
