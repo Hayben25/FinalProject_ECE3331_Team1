@@ -5,7 +5,7 @@
 		- [x] i
 		- [x] n
 		- [ ] v
-		- [ ] c
+		- [x] c
 		- [ ] o
 	- [x] file search
 		- [x] multiple file search

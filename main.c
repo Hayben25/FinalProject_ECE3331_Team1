@@ -59,6 +59,10 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+  if (V && O) {
+    fprintf(stderr, "-v and -o used together, exiting program\n");
+    exit(EXIT_FAILURE);
+  }
   /* main file searching, iterates through each file and searches through
    * searches array */
   for (int i = 0; i < files_index; i++) {
@@ -77,6 +81,7 @@ int main(int argc, char *argv[]) {
       }
       char current_line[500];
       int line_number = 1;
+      int count_selected = 0;
       while (fgets(current_line, sizeof(current_line), file) != NULL) {
         char tmp_line[strlen(current_line)];
         if (I) {
@@ -94,6 +99,9 @@ int main(int argc, char *argv[]) {
           if (N) {
             printf("%d: ", line_number);
           }
+          if (C) {
+            count_selected++;
+          }
           printf("%s", current_line);
         } else if (reti == REG_NOMATCH) {
         } else {
@@ -102,6 +110,9 @@ int main(int argc, char *argv[]) {
           exit(1);
         }
         line_number++;
+      }
+      if (C) {
+        printf("%s had %d selected lines\n", files[i], count_selected);
       }
       regfree(&regex);
       fclose(file);
