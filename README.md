@@ -2,13 +2,15 @@
 
 - [ ] Code for Regex Lite
 	- [ ] command line arguments
-		- [ ] i
-		- [ ] c
+		- [x] i
+		- [ ] n
 		- [ ] v
-		- [ ] idk what other ones
-	- [ ] file search
-		- [ ] multiple file search
-	- [ ] or operator |
-	- [ ] letter search (ex. [0-9])
-	- [ ] multiple letter search (ex. [0-9]+ or [0-9]{3})
+		- [ ] c
+		- [ ] o
+	- [x] file search
+		- [x] multiple file search
+	- [x] regex stuff
+		- [x] or operator |
+		- [x] letter search (ex. [0-9])
+		- [x] multiple letter search (ex. [0-9]+ or [0-9]{3})
 - [ ] Report
