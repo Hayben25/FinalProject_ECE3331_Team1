@@ -1,10 +1,10 @@
 # Parts of Project
 
-- [ ] Code for Regex Lite
-	- [ ] command line arguments
+- [x] Code for Regex Lite
+	- [x] command line arguments
 		- [x] i
 		- [x] n
-		- [ ] v
+		- [x] v
 		- [x] c
 		- [x] o
 	- [x] file search

@@ -14,4 +14,5 @@ check:
 	./regexLite -i test/*.txt "INput|output"
 	./regexLite -c test/*.txt "input|output"
 	./regexLite -o test/*.txt "input|output"
+	./regexLite -v test/1.txt "match"
 	./regexLite -vo test/*.txt "e"

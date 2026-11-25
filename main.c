@@ -5,11 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define ANSI_COLOR_RESET   "\x1b[0m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define countof(a) (sizeof(a) / sizeof(*(a)))
+/* for colored output */
+#define ANSI_COLOR_RESET "\x1b[0m"
+#define ANSI_COLOR_GREEN "\x1b[32m"
+#define ANSI_COLOR_RED "\x1b[31m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
 
 int main(int argc, char *argv[]) {
 
@@ -65,12 +67,12 @@ int main(int argc, char *argv[]) {
     }
   }
   if (V && O) {
-    fprintf(stderr, ANSI_COLOR_RED  "-v and -o used together, exiting program\n" ANSI_COLOR_RESET);
+    fprintf(stderr, ANSI_COLOR_RED
+            "-v and -o used together, exiting program\n" ANSI_COLOR_RESET);
     exit(EXIT_FAILURE);
   }
-  if (V) {
-    FILE *tmp = fopen("tmp.txt", "w");
-  }
+  char *v_list[500];
+  int v = 0;
   /* main file searching, iterates through each file and searches through
    * searches array */
   for (int i = 0; i < files_index; i++) {
@@ -81,7 +83,8 @@ int main(int argc, char *argv[]) {
         search[j][k] = tolower(search[j][k]);
       }
 
-      printf(ANSI_COLOR_MAGENTA "Search term: %s\n" ANSI_COLOR_RESET, search[j]);
+      printf(ANSI_COLOR_MAGENTA "Search term: %s\n" ANSI_COLOR_RESET,
+             search[j]);
       regex_t regex;
       regmatch_t pmatch[1];
       regoff_t off, len;
@@ -128,12 +131,29 @@ int main(int argc, char *argv[]) {
               s += pmatch[0].rm_eo;
             }
           } else {
+          	if (V) {
+          		bool copy = false;
+          		for(int k = 0; k < v; k++) {
+          			if(strcmp(v_list[k], current_line) == 0) {
+          				copy = true;
+          				break;
+          			}
+          		}
+          		if(!copy || v == 0) {
+          			v_list[v] = current_line;
+          			printf("%s", v_list[v]);
+          			v++;
+          		}
+            } else {
             printf("%s", current_line);
+            }
           }
         } else if (reti == REG_NOMATCH) { /* if the regex is not found */
         } else { /* if there is an error with the regex */
           regerror(reti, &regex, current_line, sizeof(current_line));
-          fprintf(stderr, "Regex match failed: %s\n", current_line);
+          fprintf(stderr,
+                  ANSI_COLOR_RED "Regex match failed: %s\n" ANSI_COLOR_RESET,
+                  current_line);
           exit(EXIT_FAILURE);
         }
         if (N) {
@@ -141,11 +161,10 @@ int main(int argc, char *argv[]) {
         } /* if -n is chosen this keeps track of the line number */
       }
       if (C) {
-        printf("%s had %d selected lines\n", files[i], count_selected);
+        printf(ANSI_COLOR_BLUE "%s had %d selected lines\n" ANSI_COLOR_RESET, files[i], count_selected);
       }
       regfree(&regex);
       fclose(file);
     }
   }
-	if(V){  remove("tmp.txt");}
 }

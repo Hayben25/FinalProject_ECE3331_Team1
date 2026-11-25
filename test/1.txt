@@ -1,5 +1,7 @@
 input
 output
+this is a matching line
 line 3
 what
 lol
+this is a matching line
