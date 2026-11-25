@@ -1,4 +1,6 @@
 #include <regex.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,8 +40,8 @@ int main(int argc, char *argv[]) {
           C = true;
           break;
         case 'n':
-        	N = true;
-        	break;
+          N = true;
+          break;
         }
       }
     }
@@ -59,27 +61,31 @@ int main(int argc, char *argv[]) {
   /* main file searching, iterates through each file and searches through
    * searches array */
   int i = 0;
-  while (files[i] != 0) {
-    FILE *file = fopen(files[i], "r");
-    printf("%s\n\n", files[i]);
-    for (int j = 0; j < search_index; j++) {
-      printf("%s\n\n\n", search[j]);
-      regex_t regex;
-      regmatch_t pmatch[1];
+  // while (files[i] != "") {
+  FILE *file = fopen(files[i], "r");
+  printf("File: %s\n", files[i]);
+  for (int j = 0; j < search_index; j++) {
+    printf("Search term: %s\n", search[j]);
+    regex_t regex;
 
-      if (regcomp(&regex, search[j], REG_NEWLINE)) {
-        exit(EXIT_FAILURE);
-      }
-      char current_line[500];
-      while (fgets(current_line, sizeof(current_line), file) != NULL) {
-        while (true) {
-          if (regexec(&regex, current_line, sizeof(pmatch) / sizeof(pmatch[0]),
-                      pmatch, 0)) {
-            break;
-          }
-        }
+    if (regcomp(&regex, search[j], REG_EXTENDED | REG_NOSUB)) {
+      exit(EXIT_FAILURE);
+    }
+    char current_line[500];
+    while (fgets(current_line, sizeof(current_line), file) != NULL) {
+      int reti = regexec(&regex, current_line, 0, NULL, 0);
+      if (!reti) {
+        printf("%s", current_line);
+      } else if (reti == REG_NOMATCH) {
+      } else {
+        regerror(reti, &regex, current_line, sizeof(current_line));
+        fprintf(stderr, "Regex match failed: %s\n", current_line);
+        exit(1);
       }
     }
-    fclose(file);
+    regfree(&regex);
   }
+  i++;
+  fclose(file);
+  //}
 }
