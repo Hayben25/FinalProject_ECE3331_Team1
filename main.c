@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define ANSI_COLOR_RESET   "\x1b[0m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define countof(a) (sizeof(a) / sizeof(*(a)))
 
 int main(int argc, char *argv[]) {
@@ -61,7 +65,7 @@ int main(int argc, char *argv[]) {
     }
   }
   if (V && O) {
-    fprintf(stderr, "-v and -o used together, exiting program\n");
+    fprintf(stderr, ANSI_COLOR_RED  "-v and -o used together, exiting program\n" ANSI_COLOR_RESET);
     exit(EXIT_FAILURE);
   }
   if (V) {
@@ -70,14 +74,14 @@ int main(int argc, char *argv[]) {
   /* main file searching, iterates through each file and searches through
    * searches array */
   for (int i = 0; i < files_index; i++) {
-    printf("File: %s\n", files[i]);
+    printf(ANSI_COLOR_GREEN "File: %s\n" ANSI_COLOR_RESET, files[i]);
     for (int j = 0; j < search_index; j++) {
       FILE *file = fopen(files[i], "r");
       for (int k = 0; I && k < strlen(search[j]); k++) {
         search[j][k] = tolower(search[j][k]);
       }
 
-      printf("Search term: %s\n", search[j]);
+      printf(ANSI_COLOR_MAGENTA "Search term: %s\n" ANSI_COLOR_RESET, search[j]);
       regex_t regex;
       regmatch_t pmatch[1];
       regoff_t off, len;
@@ -143,4 +147,5 @@ int main(int argc, char *argv[]) {
       fclose(file);
     }
   }
+	if(V){  remove("tmp.txt");}
 }

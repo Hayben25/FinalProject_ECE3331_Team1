@@ -13,4 +13,5 @@
 		- [x] or operator |
 		- [x] letter search (ex. [0-9])
 		- [x] multiple letter search (ex. [0-9]+ or [0-9]{3})
+	- [x] colored output
 - [ ] Report
