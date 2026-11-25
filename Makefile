@@ -10,7 +10,8 @@ format:
 
 check:
 	./regexLite test/*.txt
-	./regexLite -n test/*.txt "input|output"
+	./regexLite -n test/*.txt "e" "input|output"
 	./regexLite -i test/*.txt "INput|output"
 	./regexLite -c test/*.txt "input|output"
+	./regexLite -o test/*.txt "input|output"
 	./regexLite -vo test/*.txt "e"

@@ -6,7 +6,7 @@
 		- [x] n
 		- [ ] v
 		- [x] c
-		- [ ] o
+		- [x] o
 	- [x] file search
 		- [x] multiple file search
 	- [x] regex stuff

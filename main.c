@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define countof(a) (sizeof(a) / sizeof(*(a)))
 
 int main(int argc, char *argv[]) {
 
@@ -63,6 +64,9 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "-v and -o used together, exiting program\n");
     exit(EXIT_FAILURE);
   }
+  if (V) {
+    FILE *tmp = fopen("tmp.txt", "w");
+  }
   /* main file searching, iterates through each file and searches through
    * searches array */
   for (int i = 0; i < files_index; i++) {
@@ -75,41 +79,61 @@ int main(int argc, char *argv[]) {
 
       printf("Search term: %s\n", search[j]);
       regex_t regex;
+      regmatch_t pmatch[1];
+      regoff_t off, len;
 
-      if (regcomp(&regex, search[j], REG_EXTENDED | REG_NOSUB)) {
+      if (regcomp(&regex, search[j], REG_EXTENDED)) {
         exit(EXIT_FAILURE);
       }
       char current_line[500];
-      int line_number = 1;
-      int count_selected = 0;
-      while (fgets(current_line, sizeof(current_line), file) != NULL) {
+      int line_number = 1;    /* if -n is selected */
+      int count_selected = 0; /* if -c is selected */
+      while (fgets(current_line, sizeof(current_line), file) !=
+             NULL) { /* loops through every line in a file */
         char tmp_line[strlen(current_line)];
-        if (I) {
+        if (I) { /* makes a tmp array of lowercase lines if -i is selected */
           for (int k = 0; k < strlen(current_line); k++) {
             tmp_line[k] = tolower(current_line[k]);
           }
         }
         int reti;
-        if (I) {
-          reti = regexec(&regex, tmp_line, 0, NULL, 0);
+        if (I) { /* uses tmp_line so all letters are lowercase if -i is selected
+                  */
+          reti = regexec(&regex, tmp_line, countof(pmatch), pmatch, 0);
         } else {
-          reti = regexec(&regex, current_line, 0, NULL, 0);
+          reti = regexec(&regex, current_line, countof(pmatch), pmatch, 0);
         }
-        if (!reti) {
-          if (N) {
+        if (!reti) { /* if the regex is found */
+          if (N) {   /* if -n is selected the current line number is printed */
             printf("%d: ", line_number);
           }
-          if (C) {
+          if (C) { /* if -c is selected the count of regexs found is incremented
+                    */
             count_selected++;
           }
-          printf("%s", current_line);
-        } else if (reti == REG_NOMATCH) {
-        } else {
+          if (O) {
+          	char *s = current_line;
+            while (true) {
+              if (regexec(&regex, s, countof(pmatch), pmatch, REG_EXTENDED))
+                break;
+
+              len = pmatch[0].rm_eo - pmatch[0].rm_so;
+              printf("%.*s\n", len, s + pmatch[0].rm_so);
+
+              s += pmatch[0].rm_eo;
+            }
+          } else {
+            printf("%s", current_line);
+          }
+        } else if (reti == REG_NOMATCH) { /* if the regex is not found */
+        } else { /* if there is an error with the regex */
           regerror(reti, &regex, current_line, sizeof(current_line));
           fprintf(stderr, "Regex match failed: %s\n", current_line);
-          exit(1);
+          exit(EXIT_FAILURE);
         }
-        line_number++;
+        if (N) {
+          line_number++;
+        } /* if -n is chosen this keeps track of the line number */
       }
       if (C) {
         printf("%s had %d selected lines\n", files[i], count_selected);
