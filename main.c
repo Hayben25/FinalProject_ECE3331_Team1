@@ -112,10 +112,11 @@ int main(int argc, char *argv[]) {
             count_selected++;
           }
           if (O) {
-          	char *s = current_line;
+            char *s = current_line;
             while (true) {
-              if (regexec(&regex, s, countof(pmatch), pmatch, REG_EXTENDED))
+              if (regexec(&regex, s, countof(pmatch), pmatch, REG_EXTENDED)) {
                 break;
+              }
 
               len = pmatch[0].rm_eo - pmatch[0].rm_so;
               printf("%.*s\n", len, s + pmatch[0].rm_so);
