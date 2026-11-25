@@ -60,8 +60,7 @@ int main(int argc, char *argv[]) {
   }
   /* main file searching, iterates through each file and searches through
    * searches array */
-  int i = 0;
-  // while (files[i] != "") {
+  for(int i = 0; i < files_index; i++){
   FILE *file = fopen(files[i], "r");
   printf("File: %s\n", files[i]);
   for (int j = 0; j < search_index; j++) {
@@ -85,7 +84,6 @@ int main(int argc, char *argv[]) {
     }
     regfree(&regex);
   }
-  i++;
   fclose(file);
-  //}
+  }
 }
