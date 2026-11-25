@@ -77,17 +77,17 @@ int main(int argc, char *argv[]) {
       }
       char current_line[500];
       while (fgets(current_line, sizeof(current_line), file) != NULL) {
-      		char tmp_line[strlen(current_line)];
-      	if (I) {
-        for (int k = 0; k < strlen(current_line); k++) {
-          tmp_line[k] = tolower(current_line[k]);
-        }
+        char tmp_line[strlen(current_line)];
+        if (I) {
+          for (int k = 0; k < strlen(current_line); k++) {
+            tmp_line[k] = tolower(current_line[k]);
+          }
         }
         int reti;
-        if(I) {
-        	reti = regexec(&regex, tmp_line, 0, NULL, 0);
+        if (I) {
+          reti = regexec(&regex, tmp_line, 0, NULL, 0);
         } else {
-        reti = regexec(&regex, current_line, 0, NULL, 0);
+          reti = regexec(&regex, current_line, 0, NULL, 0);
         }
         if (!reti) {
           printf("%s", current_line);
